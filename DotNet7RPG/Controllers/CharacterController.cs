@@ -1,7 +1,10 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DotNet7RPG.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class CharacterController : ControllerBase
@@ -16,7 +19,8 @@ public class CharacterController : ControllerBase
     [HttpGet("GetAll")]
     public async Task<ActionResult<ServiceResponse<List<GetCharacterDto>>>> Get()
     {
-        var response = await _characterService.GetAllCharacters();
+        int userId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value);
+        var response = await _characterService.GetAllCharacters(userId);
         return Ok(response);
     }
 
@@ -34,7 +38,7 @@ public class CharacterController : ControllerBase
 
         return Ok(response);
     }
-    
+
     [HttpPut]
     public async Task<ActionResult<ServiceResponse<GetCharacterDto>>> UpdateCharacter(UpdateCharacterDto ch)
     {
@@ -42,7 +46,7 @@ public class CharacterController : ControllerBase
         if (response.Success) return Ok(response);
         return NotFound(response);
     }
-    
+
     [HttpDelete("{id}")]
     public async Task<ActionResult<ServiceResponse<List<GetCharacterDto>>>> DeleteCharacter(int id)
     {

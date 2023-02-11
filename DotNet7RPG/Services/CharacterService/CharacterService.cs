@@ -4,17 +4,17 @@ public class CharacterService : ICharacterService
 {
     private readonly IMapper _mapper;
     private readonly DataContext _context;
-    
+
     public CharacterService(IMapper mapper, DataContext context)
     {
         _mapper = mapper;
         _context = context;
     }
 
-    public async Task<ServiceResponse<List<GetCharacterDto>>> GetAllCharacters()
+    public async Task<ServiceResponse<List<GetCharacterDto>>> GetAllCharacters(int userId)
     {
         var serviceResponse = new ServiceResponse<List<GetCharacterDto>>();
-        var characters = await _context.Characters.ToListAsync();
+        var characters = await _context.Characters.Where(c => c.User!.Id == userId).ToListAsync();
         serviceResponse.Payload = characters.Select(c => _mapper.Map<GetCharacterDto>(c)).ToList();
         return serviceResponse;
     }
@@ -42,7 +42,7 @@ public class CharacterService : ICharacterService
         var serviceResponse = new ServiceResponse<GetCharacterDto>();
         try
         {
-            var character = await _context.Characters.FirstOrDefaultAsync(c=>c.Id==ch.Id);
+            var character = await _context.Characters.FirstOrDefaultAsync(c => c.Id == ch.Id);
             if (character is null) throw new Exception($"Character with Id {ch.Id} not found");
             character.Name = ch.Name;
             await _context.SaveChangesAsync();
