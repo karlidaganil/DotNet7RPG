@@ -1,9 +1,11 @@
 global using DotNet7RPG.Models;
 global using DotNet7RPG.Services.CharacterService;
 global using DotNet7RPG.Dtos.Character;
+global using DotNet7RPG.Dtos.Weapon;
 global using Microsoft.EntityFrameworkCore;
 global using DotNet7RPG.Data;
 global using AutoMapper;
+using DotNet7RPG.Services.WeaponService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -32,6 +34,7 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddScoped<ICharacterService, CharacterService>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IWeaponService, WeaponService>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
